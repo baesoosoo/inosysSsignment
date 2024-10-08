@@ -1,5 +1,6 @@
 package ino.web.freeBoard.service;
 
+import ino.web.freeBoard.dto.CommentDTO;
 import ino.web.freeBoard.dto.FreeBoardDto;
 import ino.web.freeBoard.dto.Pagination;
 
@@ -94,5 +95,28 @@ public class FreeBoardService {
 		sqlSessionTemplate.delete("freeBoardDeleteAll", num);
 	}
 
+	//댓글 추가
+	public void addComment(CommentDTO comment) {
+		
+		Integer commentcn = sqlSessionTemplate.selectOne("commentCn");
 
+		if(commentcn != null) {
+			comment.setNum(commentcn+1);
+		}else {
+			comment.setNum(1);
+		}
+		
+		System.out.println("서비스에서 댓글>>>"+comment);
+		
+		sqlSessionTemplate.insert("addCommetn", comment);
+		
+	}
+	//댓글 불러오기
+	public List<CommentDTO> getCommentList(int num){
+		
+		List<CommentDTO>CommentList = sqlSessionTemplate.selectList("getCommentList", num);
+		
+		return CommentList;
+		
+	}
 }

@@ -1,6 +1,7 @@
 package ino.web.freeBoard.controller;
 
 
+import ino.web.freeBoard.dto.CommentDTO;
 import ino.web.freeBoard.dto.FreeBoardDto;
 import ino.web.freeBoard.dto.Pagination;
 import ino.web.freeBoard.service.FreeBoardService;
@@ -122,9 +123,15 @@ public class FreeBoardController {
 		System.out.println("num>>>"+num);
 		FreeBoardDto freeBoardDto = freeBoardService.getDetailByNum(num);
 		
+		List<CommentDTO> commentList = freeBoardService.getCommentList(num);
+		
 		System.out.println("freeBoardDto>>>"+freeBoardDto);
 		
-		return new ModelAndView("freeBoardDetail", "freeBoardDto", freeBoardDto);
+		  ModelAndView mav = new ModelAndView("freeBoardDetail");
+		    mav.addObject("freeBoardDto", freeBoardDto);
+		    mav.addObject("commentList", commentList); 
+		    
+		    return mav;
 	}
 
 	@RequestMapping(value="/freeBoardModify.ino",method = RequestMethod.POST)
@@ -193,6 +200,36 @@ public class FreeBoardController {
 	    
 	    return response;
 	}
+	
+	//댓글 작성
+	@RequestMapping(value="/add.ino",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> addComment(@ModelAttribute CommentDTO comment){
+		
+		int num= comment.getRef_group();
+		comment.setRef_group(num);
+		System.out.println("comment>>>>>"+comment);
+		
+		Map<String, Object> add = new HashMap<>();
+		
+		try {
+			
+			 freeBoardService.addComment(comment);
+			 add.put("success", true);
+			
+		}catch (Exception e) {
+			
+			add.put("success", false);
+			add.put("message", e.getMessage());
+			
+		}
+		return add;
+	}
+	
+
+	
+	  
+	  
 
 	
 }

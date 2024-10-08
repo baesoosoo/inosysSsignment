@@ -41,6 +41,7 @@
 		
 		$.ajax({
 			url:"/mavenBoard/freeBoardDelete.ino",
+			contentType: 'application/json; charset=utf-8',
 			type:"GET",
 			data:{
 				"num":num
@@ -60,7 +61,28 @@
 		 
 	 });
 	 
+ 
+	 $('#submitComment').on('click',function(){
+		 var commentcon = $('#commentForm').serialize();
+		 
+		 $.ajax({
+			 url:"/mavenBoard/add.ino",
+			 type:"POST",
+			 data:commentcon,
+			 success:function(response){
+				 if(response.success){
+					 alert("댓글을 작성하였습니다!");
+					 location.reload(); 
+				 }
+			 },
+			 error:function(e){
+				 alert("댓글 작성을 실패했습니다"+e.responseText);
+			 }
+		 });
+	 })
+
  });
+ 
 
 </script>
 <body>
@@ -112,7 +134,33 @@
 				</tr>
 			</tfoot>
 		</table>
-
+	</form>
+	
+	<h3>댓글</h3>
+	<div style="text-align:left;">
+	    <c:forEach var="comment" items="${commentList}">
+	       <p><strong>${comment.writer} :</strong>${comment.content}  </p>
+	       <p><small>${comment.regdate}</small></p>
+	    </c:forEach>
+	</div>
+	
+	<form id="commentForm">
+	<input type="hidden" value="${freeBoardDto.num } " name="ref_group">
+		<table>
+			<tr>
+				<th><label for="writer">작성자:</label></th>
+				<td><input type="text" name="writer"></td>
+			</tr>
+			<tr>
+				<td><label for="content">내용:</label></td>
+				<td><textarea name="content" rows="5" cols="50"></textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="right">
+				<input type="button" value="댓글작성" id="submitComment">
+				</td>
+			</tr>
+		</table>
 	</form>
 
 </body>

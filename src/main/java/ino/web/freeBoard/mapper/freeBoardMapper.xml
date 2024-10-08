@@ -5,6 +5,24 @@
 
 <mapper namespace="ino.web.freeBoard.mapper.FreeBoardMapper">
 
+  	<!-- 댓글 추가 -->
+    <insert id="addCommetn">
+        INSERT INTO freeboard_comment (num, writer, content, ref_group, comment_group, deleted, regdate)
+        VALUES (#{num}, #{writer}, #{content}, #{ref_group}, #{comment_group}, 'N', SYSDATE)
+    </insert>
+    
+    <select id="commentCn" resultType="int">
+    
+    select MAX(num) from freeboard_comment
+    
+    </select>
+    
+    <select id="getCommentList" resultType="ino.web.freeBoard.dto.CommentDTO">
+    
+    select * from freeboard_comment where ref_group = #{num}
+    
+    </select>
+
 
 	<select id="freeBoardGetList" resultType="freeBoardDto" > <!-- resultType="ino.web.board.dto.BoardDto" -->
 	SELECT 
