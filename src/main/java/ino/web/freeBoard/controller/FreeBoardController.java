@@ -227,6 +227,26 @@ public class FreeBoardController {
 	}
 	
 
+	@RequestMapping(value="/commentModify.ino",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> commentModify(@RequestParam("content") String content,@RequestParam("num") int num){
+		
+		System.out.println("content>>>>>>>>>>>>>>"+content);
+		Map<String, Object> response = new HashMap<>();
+		
+		try {
+			freeBoardService.commentModify(content,num);
+			response.put("success", true);
+			
+		}catch (Exception e){
+			
+			response.put("success", false);
+			response.put("message", e.getMessage());
+		}
+		
+		return response;
+		
+	}
 	
 	  
 	  
