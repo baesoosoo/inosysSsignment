@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ino.web.freeBoard.mapper.FreeBoardMapper">
+
+  	<!-- 댓글 추가 -->
+    <insert id="addCommetn">
+        INSERT INTO freeboard_comment (num, writer, content, ref_group, comment_group, deleted, regdate)
+        VALUES (#{num}, #{writer}, #{content}, #{ref_group}, #{comment_group}, 'N', SYSDATE)
+    </insert>
+    
+    <select id="commentCn" resultType="int">
+    
+    select MAX(num) from freeboard_comment
+    
+    </select>
+    
+    <select id="getCommentList" resultType="ino.web.freeBoard.dto.CommentDTO">
+    
+    select * from freeboard_comment where ref_group = #{num}
+    
+    </select>
+
+
+	<select id="freeBoardGetList" resultType="freeBoardDto" > <!-- resultType="ino.web.board.dto.BoardDto" -->
+	SELECT 
+	    CASE
+	        WHEN code_type = '01' THEN '자유'
+	        WHEN code_type = '02' THEN '익명'
+	        WHEN code_type = '03' THEN 'Qna'
+	    END AS code_type,num,name,title,content,to_char(regdate, 'yyyy/mm/dd') as regdate
+	FROM (
+	    SELECT 
+	        fb.*, 
+	        ROWNUM AS rnum from freeboard fb
+	    WHERE 
+	        ROWNUM &lt;= #{offset} + #{pageSize}  
+	)
+	WHERE rnum BETWEEN #{offset} + 1 AND #{offset} + #{pageSize}
+	ORDER BY num ASC
+
+	</select>
+	
+	
+	
+	<select id="freeBoardSearch" resultType="FreeBoardDto" parameterType="Map">
+    SELECT 
+        CASE
+            WHEN code_type = '01' THEN '자유'
+            WHEN code_type = '02' THEN '익명'
+            WHEN code_type = '03' THEN 'Qna'
+        END AS code_type,num,name,title,content,to_char(regdate, 'yyyy/mm/dd') as regdate
+    FROM (
+        SELECT 
+            fb.*, 
+            ROWNUM AS rnum from freeboard fb
+        WHERE 1 = 1
+            <if test='selectedOption != null and selectedOption == "1" and inputCont != null and inputCont.trim() != ""'>
+                AND code_type LIKE #{inputCont}
+            </if>
+            <if test='selectedOption != null and selectedOption == "2" and inputCont != null and inputCont.trim() != ""'>
+                AND num LIKE #{inputCont}
+            </if>
+            <if test='selectedOption != null and selectedOption == "3" and inputCont != null and inputCont.trim() != ""'>
+                AND content LIKE '%' || #{inputCont} || '%'
+            </if>
+            <if test='selectedOption != null and selectedOption == "4" and inputCont != null and inputCont.trim() != ""'>
+                AND title LIKE '%' || #{inputCont} || '%'
+            </if>
+            <if test='selectedOption != null and selectedOption == "5" and inputCont != null and inputCont.trim() != ""'>
+                AND name LIKE '%' || #{inputCont} || '%'
+            </if>
+            <if test='selectedOption != null and selectedOption == "6" and inputCont != null and inputCont.trim() != ""'>
+                <![CDATA[
+                    AND regdate >= TO_DATE(#{date1}, 'YYYYMMDD') 
+                    AND regdate < TO_DATE(#{date2}, 'YYYYMMDD') + INTERVAL '1' DAY 
+                ]]>
+            </if>
+    )
+    WHERE rnum BETWEEN #{offset} + 1 AND #{offset} + #{pageSize}
+    ORDER BY num asc
+</select>
+
+
+
+
+	
+<!-- 	decode 함수 사용 
+select name as 이름,
+    title as 제목,
+    content as 내용,
+    to_char(regdate,'yyyy/mm/dd') as regdate,
+    decode(code_type,'01','자유','02','익명','03','Qna') from freeboard; -->
+
+	<insert id="freeBoardInsertPro" parameterType="freeBoardDto">
+		INSERT INTO FREEBOARD(code_type, TITLE, NUM, NAME, REGDATE, CONTENT)
+		VALUES(#{codeType}, #{title},#{num}, #{name}, SYSDATE, #{content})
+		
+	</insert>
+	
+	<!-- 시퀀스 적용
+	<insert id="freeBoardInsertPro" parameterType="freeBoardDto">
+		INSERT INTO FREEBOARD(code_type,NUM, TITLE, NAME, REGDATE, CONTENT)
+		VALUES(#{codeType},seq_num.NEXTVAL, #{title}, #{name}, SYSDATE, #{content})
+		
+		<selectKey keyProperty="num" resultType="int" order="AFTER">
+			select seq_num.CURRVAL from dual
+		</selectKey>
+	</insert> -->
+
+	<select id="freeBoardDetailByNum" resultType="freeBoardDto" parameterType="int">
+		SELECT code_type,NUM, TITLE, NAME, TO_CHAR(REGDATE,'YYYY/MM/DD') REGDATE, CONTENT FROM FREEBOARD
+		WHERE NUM=#{num}
+	</select>
+
+	<select id="freeBoardNewNum" resultType="int">
+		SELECT MAX(NUM)
+		FROM FREEBOARD
+	</select>
+
+	<update id="freeBoardModify" parameterType="freeBoardDto">
+		UPDATE FREEBOARD SET TITLE = #{title}, CONTENT = #{content} WHERE NUM = #{num}
+
+	</update>
+
+	<delete id="freeBoardDelete" parameterType="int">
+		DELETE FROM FREEBOARD WHERE NUM = #{num}
+
+	</delete>
+	
+
+	<delete id="freeBoardDeleteAll" parameterType="java.util.List">
+	    DELETE FROM FREEBOARD WHERE NUM IN 
+	        <foreach item="item" collection="list" open="(" separator="," close=")">
+	              #{item}
+	        </foreach>
+	</delete>
+
+
+
+</mapper>
