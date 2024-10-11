@@ -119,4 +119,16 @@ public class FreeBoardService {
 		return CommentList;
 		
 	}
+	
+	//댓글 수정
+	public void commentModify(String content,int num) {
+		
+		Map<String, Object> response = new HashMap<>();
+		
+		response.put("content", content);
+		response.put("num", num);
+		
+		sqlSessionTemplate.update("commentModify", response);
+		
+	}
 }

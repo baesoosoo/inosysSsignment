@@ -22,7 +22,12 @@
     select * from freeboard_comment where ref_group = #{num}
     
     </select>
-
+    
+    <!-- 댓글 수정 -->
+	<update id="commentModify" parameterType="Map">
+		update freeboard_comment set content=#{content} where num = #{num} 
+	
+	</update>
 
 	<select id="freeBoardGetList" resultType="freeBoardDto" > <!-- resultType="ino.web.board.dto.BoardDto" -->
 	SELECT 

@@ -80,6 +80,56 @@
 			 }
 		 });
 	 })
+	 
+	 $('.commentModify').on('click',function(){
+		 event.preventDefault();
+		var commentMid = $(this).data('id');
+		var commentCon = $("#commentCon"+commentMid);
+		var commentModifyCon = commentCon.find(".commentModifyCon").text().trim();
+		var commentWriter = commentCon.find(".commentWriter strong").text().trim();
+		console.log("commentWriter>>"+commentWriter);
+		
+		
+		 var commentHtml = `
+			 	<p>작성자:<input type="text" class="Mwriter" readonly></p>
+		        <textarea  rows="4" cols="50" class="Mcont" name="content" id="content"></textarea>
+		        <a href="#" class="saveBtn">저장</a>
+		        <a href="#" class="cancelBtn">취소</a>
+		    `;
+		commentCon.html(commentHtml);
+		commentCon.find(".Mwriter").val(commentWriter);
+		commentCon.find(".Mcont").val(commentModifyCon);
+		
+	 
+		 $(".saveBtn").on("click",function(){
+			var newCommentCon=$("#content").val();
+			console.log("newCommentCon>>>"+newCommentCon);
+			
+			$.ajax({
+				url:"/mavenBoard/commentModify.ino",
+				type:"POST",
+				data:{
+					content:newCommentCon,
+					num:commentMid
+					},
+				success:function(response){
+					
+					if(response.success){
+					alert("수정을 성공했습니다.");
+					location.reload();
+					}
+				},
+				error:function(e){
+					alert("댓글 수정을 실패했습니다"+e.responseText);
+				}
+			})
+			 
+		 });
+		
+	 });
+		
+		
+		
 
  });
  
@@ -137,10 +187,12 @@
 	</form>
 	
 	<h3>댓글</h3>
-	<div style="text-align:left;">
+	<div id="commentCon">
 	    <c:forEach var="comment" items="${commentList}">
-	       <p><strong>${comment.writer} :</strong>${comment.content}  </p>
+	    <div id="commentCon${comment.num}">
+	       <p class="commentWriter"><strong>${comment.writer} </strong></p><p class="commentModifyCon">${comment.content} </p> <a href="#" class="commentModify" data-id="${comment.num} ">수정</a>  
 	       <p><small>${comment.regdate}</small></p>
+	    </div>
 	    </c:forEach>
 	</div>
 	
