@@ -57,7 +57,16 @@ public class FreeBoardService {
 	    return list;
 	}
 
-	
+	public int searchCount(String inputCont,String selectedOption) {
+		
+		Map<String, Object> count = new HashMap<>();
+		
+		count.put("inputCont", inputCont);
+		count.put("selectedOption", selectedOption);
+		
+		
+		return sqlSessionTemplate.selectOne("selectCount", count);
+	}
 
 
 	public void freeBoardInsertPro(FreeBoardDto dto){

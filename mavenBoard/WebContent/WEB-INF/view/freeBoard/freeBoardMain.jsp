@@ -6,7 +6,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style type="text/css">
+
+	#writeBtn{
+		text-decoration: none;
+	}
+
+</style>
 </head>
 <script type="text/javascript">
 
@@ -156,6 +164,7 @@
 	            }),
 	            success: function(response) {
 	                var tableRows = '';
+	                var totalCnt='';
 	                if (response.success) {
 	                    for (var i = 0; i < response.searchList.length; i++) {
 	                        tableRows += '<tr>';
@@ -167,7 +176,9 @@
 	                        tableRows += '<td>' + response.searchList[i].regdate + '</td>';
 	                        tableRows += '</tr>';
 	                    }
+	                   	 totalCnt += '<span><small>게시글 총 수:'+response.seachCount +'건</small></span>';
 	                    $('#tb').html(tableRows);
+	                    $('#totalCount').html(totalCnt);
 	                } else {
 	                    $('#tb').empty();
 	                }
@@ -201,34 +212,35 @@
 				 <option value="6">기간</option> <!-- input type text input type text 검색버튼 클릭시 숫자인지 확인 20240924 -->
 			</select>
 			<span class="here"></span>
-			<button id="search">검색</button>
+			<button id="search" class="btn btn-outline-danger">검색</button>
 		</div>
 		<div style="width:650px;" align="right">
-			<a href="./freeBoardInsert.ino">글쓰기</a>
+			<a href="./freeBoardInsert.ino" id="writeBtn" class="btn btn-outline-danger">글쓰기</a><br>
+			<span id="totalCount"><small>게시글 총 수:	${totalCount}건</small></span>
 		</div>
 		
 		<hr style="width: 600px;">
 	<div style="padding-bottom: 10px;">
-	    <table border="1" id="tab" class="table table-striped table-hover">
-	        <thead>
+	    <table border="1" id="tab" class="table" style="width: 600px;">
+	        <thead class="table-dark">
 	            <tr>
-	                <td><input type="checkbox" id="allCheck" name="allCheck"></td>
-	                <td style="width: 55px; padding-left: 30px;" align="center">타입</td>
-	                <td style="width: 50px; padding-left: 10px;" align="center">글번호</td>
-	                <td style="width: 125px;" align="center">글제목</td>
-	                <td style="width: 48px; padding-left: 50px;" align="center">글쓴이</td>
-	                <td style="width: 100px; padding-left: 95px;" align="center">작성일시</td>
+	                <td style="width: 5px;"><input type="checkbox" id="allCheck" name="allCheck"></td>
+	                <td style="width: 80px; padding-left: 30px;" align="center">타입</td>
+	                <td style="width: 80px; padding-left: 10px;" align="center">글번호</td>
+	                <td style="width: 120px;" align="center">글제목</td>
+	                <td style="width: 120px; padding-left: 50px;" align="center">글쓴이</td>
+	                <td style="padding-left: 50px;"  align="center">작성일시</td>
 	            </tr>
 	        </thead>
 	        <tbody id="tb" name="tb">
 	            <c:forEach var="dto" items="${list}">
 	                <tr>
-	                    <td><input type="checkbox" name="RowCheck" value="${dto.num}"></td>
-	                    <td style="width: 55px; padding-left: 30px;" align="center">${dto.codeType}</td>
-	                    <td style="width: 50px; padding-left: 10px;" align="center">${dto.num}</td>
-	                    <td style="width: 125px;" align="center"><a href="./freeBoardDetail.ino?num=${dto.num}">${dto.title}</a></td>
-	                    <td style="width: 48px; padding-left: 50px;" align="center">${dto.name}</td>
-	                    <td style="width: 100px; padding-left: 95px;" align="center">${dto.regdate}</td>
+	                    <td style="width: 5px;"><input type="checkbox" name="RowCheck" value="${dto.num}"></td>
+	                    <td style="width: 80px; padding-left: 30px;" align="center">${dto.codeType}</td>
+	                    <td style="width: 30px; padding-left: 10px;" align="center">${dto.num}</td>
+	                    <td style="width: 120px;" align="center"><a href="./freeBoardDetail.ino?num=${dto.num}">${dto.title}</a></td>
+	                    <td style="width: 120px; padding-left: 50px;" align="center">${dto.name}</td>
+	                    <td style="padding-left: 50px;"  align="center">${dto.regdate}</td>
 	                </tr>
 	            </c:forEach>
 	        </tbody>
@@ -236,11 +248,13 @@
 	</div>
 	<hr style="width: 600px;">
 
-
+	<div align="right" style="width:650px;">
+		<button id="deleteButton" class="btn btn-outline-danger">삭제</button>
+	</div>
 
 	<!-- 페이징 처리 -->
 	<ul style="display: flex; list-style: none; padding: 0; justify-content: center;">
-	    <li style="margin-right: 5px;">
+	    <li style="margin-right: 5px;"> 
 	        <a href="/mavenBoard/main.ino?page=1&pageSize=${pageSize}" data-page="1" class="page-link">◀</a>
 	    </li>
 	    
@@ -255,8 +269,6 @@
 	    </li>
 	</ul><br>
 
-
-	<button id="deleteButton" >삭제</button>
 	
 </body>
 </html>

@@ -30,7 +30,7 @@ public class FreeBoardController {
 
 	@RequestMapping("/main.ino")
 	public ModelAndView main(@RequestParam(defaultValue = "1") int page, 
-	        @RequestParam(defaultValue = "5") int pageSize) {
+	        @RequestParam(defaultValue = "6") int pageSize) {
 
 	    int totalCount = freeBoardService.getNewNum();
 	    System.out.println("total값>>>>" + totalCount);
@@ -44,6 +44,7 @@ public class FreeBoardController {
 	    ModelAndView mv = new ModelAndView("boardMain");
 	    mv.addObject("list", list);
 	    mv.addObject("pagination", pagination);
+	    mv.addObject("totalCount", totalCount);
 	    
 	    return mv;
 	}
@@ -64,6 +65,7 @@ public class FreeBoardController {
 	    System.out.println("선택 값>>> " + selectedOption);
 	    
 	    List<FreeBoardDto> searchList = freeBoardService.freeBoardList(inputCont, selectedOption, currentPage, pageSize);
+	    int seachCount = freeBoardService.searchCount(inputCont,selectedOption);
 
 	    System.out.println("검색 후 출력 데이터 >>>" + searchList);
 
@@ -72,6 +74,7 @@ public class FreeBoardController {
 	    try {
 	        response.put("success", true);
 	        response.put("searchList", searchList);
+	        response.put("seachCount", seachCount);
 	    } catch (Exception e) {
 	        response.put("success", false);
 	        response.put("message", e.getMessage());

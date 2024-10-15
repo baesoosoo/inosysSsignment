@@ -57,6 +57,36 @@
 	</select>
 	
 	
+	<select id="selectCount" resultType="int" parameterType="Map">
+	
+		select count(*) from freeboard
+		
+		  WHERE 1 = 1
+            <if test='selectedOption != null and selectedOption == "1" and inputCont != null and inputCont.trim() != ""'>
+                AND code_type LIKE #{inputCont}
+            </if>
+            <if test='selectedOption != null and selectedOption == "2" and inputCont != null and inputCont.trim() != ""'>
+                AND num LIKE #{inputCont}
+            </if>
+            <if test='selectedOption != null and selectedOption == "3" and inputCont != null and inputCont.trim() != ""'>
+                AND content LIKE '%' || #{inputCont} || '%'
+            </if>
+            <if test='selectedOption != null and selectedOption == "4" and inputCont != null and inputCont.trim() != ""'>
+                AND title LIKE '%' || #{inputCont} || '%'
+            </if>
+            <if test='selectedOption != null and selectedOption == "5" and inputCont != null and inputCont.trim() != ""'>
+                AND name LIKE '%' || #{inputCont} || '%'
+            </if>
+            <if test='selectedOption != null and selectedOption == "6" and inputCont != null and inputCont.trim() != ""'>
+                <![CDATA[
+                    AND regdate >= TO_DATE(#{date1}, 'YYYYMMDD') 
+                    AND regdate < TO_DATE(#{date2}, 'YYYYMMDD') + INTERVAL '1' DAY 
+                ]]>
+            </if>
+	
+	</select>
+	
+	
 	
 	<select id="freeBoardSearch" resultType="FreeBoardDto" parameterType="Map">
     SELECT 
